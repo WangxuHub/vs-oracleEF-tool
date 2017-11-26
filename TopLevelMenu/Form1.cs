@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace TopLevelMenu
@@ -25,17 +26,21 @@ namespace TopLevelMenu
         public Form1()
         {
             InitializeComponent();
-            if (AppSettings != null && AppSettings.Count > 0)
-            {
-                txtEdmxSrc.Text = AppSettings["InputFileName"];
-                txtEdmxDes.Text = AppSettings["OutputFileName"];
-                //txtXmlnsNameSpace.Text = AppSettings["XmlnsNameSpaces"];
-            }
-            if (ConnectionStrings != null && ConnectionStrings.Count > 0)
-            {
-                txtConnStr.Text = ConnectionStrings["ConnStr"] != null ? ConnectionStrings["ConnStr"].ConnectionString : null;
-            }
         }
+
+        private List<Model.ProjectEdmxItem> ProjectEdmxList = new List<Model.ProjectEdmxItem>();
+
+        public Form1(List<Model.ProjectEdmxItem> dataList)
+        {
+            InitializeComponent();
+            ProjectEdmxList = dataList;
+
+            var edmxDatasource = ProjectEdmxList.SelectMany(a => a.EdmxPath).ToList();
+            this.comboEdmxList.DataSource = edmxDatasource;
+            this.comboEdmxList.DisplayMember = "ShortFileName";
+           // this.comboEdmxList.ValueMember = "ShortFileName";
+        }
+
 
         private void btnSave_Click(object sender, EventArgs e)
         {

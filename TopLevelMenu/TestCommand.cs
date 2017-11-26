@@ -11,6 +11,11 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System.Collections;
 using Microsoft.VisualStudio;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace TopLevelMenu
 {
@@ -106,10 +111,77 @@ namespace TopLevelMenu
             //    OLEMSGICON.OLEMSGICON_INFO,
             //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
             //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            
 
-            var a = new Form1();
-            a.Show();
+            var projectList = SolutionProjects.Projects();
+
+            var res = new List<Model.ProjectEdmxItem>();
+            projectList.ToList().ForEach(item=> {
+                var projectEdmxItem = new Model.ProjectEdmxItem();
+
+                var connstrList = new List<string>();
+                
+                var dir = Path.GetDirectoryName(item.FileName);
+
+                var edmxFile = Directory.GetFiles(dir, "*.edmx", SearchOption.TopDirectoryOnly);
+                if(edmxFile.Count()<=0)
+                {
+                    return;
+                }
+
+                projectEdmxItem.EdmxPath = edmxFile.Select(a=>new Model.EdmxItem {
+                    ShortFileName = Path.GetFileName(a),
+                    FullFileName = a
+                }).ToList();
+
+                var configFile = Path.Combine(dir,"App.config");
+
+                if(File.Exists(configFile))
+                {
+                    var configObj = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap {
+                        ExeConfigFilename = configFile
+                    },ConfigurationUserLevel.None);
+
+                    var connList = configObj.ConnectionStrings?.ConnectionStrings;
+
+                    if(connList!=null && connList.Count>0)
+                    {
+                        foreach(ConnectionStringSettings connItem in connList)
+                        {
+                            if("System.Data.EntityClient".ToLower() != connItem.ProviderName?.ToLower())
+                            {
+                                continue;
+                            }
+                            if(connItem.ConnectionString.ToLower().IndexOf("Oracle.ManagedDataAccess.Client".ToLower())<0)
+                            {
+                                continue;
+                            }
+
+                            var connectionItem = new Model.ConnectionStringItem();
+
+                            var regex = new Regex("provider connection string=\"(?<connStr>.*)\"",RegexOptions.IgnoreCase);
+                          
+                            connectionItem.Name = connItem.Name;
+                            connectionItem.ConnectionString = regex.Match(connItem.ConnectionString).Groups["connStr"].Value;
+                            
+                            var conn = new Oracle.ManagedDataAccess.Client.OracleConnection(connectionItem.ConnectionString);
+
+                            var regexUserID = new Regex("USER\\s+ID\\s*?=\\s*?(?<userID>\\S*)[;]?", RegexOptions.IgnoreCase);
+                            connectionItem.DatabaseUserName = regexUserID.Match(connectionItem.ConnectionString).Groups["userID"].Value;
+
+                            var regexDataSource = new Regex("Data\\s+Source\\s*?=\\s*(?<datasource>[^;]*)\\s*[;]?", RegexOptions.IgnoreCase);
+                            connectionItem.Datasource = regexDataSource.Match(connectionItem.ConnectionString).Groups["datasource"].Value;
+
+                            projectEdmxItem.ConnectionString.Add(connectionItem);
+                        }
+                    }
+                }
+
+                res.Add(projectEdmxItem);
+            });
+
+
+            var form = new Form1(res);
+            form.Show();
         }
         
 
