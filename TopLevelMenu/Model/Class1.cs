@@ -8,23 +8,25 @@ namespace TopLevelMenu.Model
 {
     public class ProjectEdmxItem
     {
-        public List<EdmxItem> EdmxPath = new List<EdmxItem>();
+        public List<EdmxItem> EdmxPath { get; set; } = new List<EdmxItem>();
 
-        public List<ConnectionStringItem> ConnectionString = new List<ConnectionStringItem>();
+        public List<ConnectionStringItem> ConnectionString { get; set; } = new List<ConnectionStringItem>();
     }
 
     public class ConnectionStringItem
     {
-        public string Name;
-        public string ConnectionString;
-        public string Datasource;
-        public string DatabaseUserName;
+        public string Name { get; set; }
+        public string ConnectionString { get; set; }
+        public string Datasource { get; set; }
+        public string DatabaseUserName { get; set; }
+
+        public string DisplayName { get; set; }
     }
 
     public class EdmxItem
     {
-        public string ShortFileName;
+        public string ShortFileName { get; set; }
 
-        public string FullFileName;
+        public string FullFileName { get; set; }
     }
 }

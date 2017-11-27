@@ -180,6 +180,7 @@ namespace TopLevelMenu
             });
 
 
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(res);
             var form = new Form1(res);
             form.Show();
         }

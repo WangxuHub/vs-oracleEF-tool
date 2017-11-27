@@ -29,18 +29,19 @@ namespace TopLevelMenu
         }
 
         private List<Model.ProjectEdmxItem> ProjectEdmxList = new List<Model.ProjectEdmxItem>();
+        private List<Model.EdmxItem> edmxDatasource = new List<Model.EdmxItem>();
+        private List<Model.ConnectionStringItem> connectionStringList = new List<Model.ConnectionStringItem>();
 
         public Form1(List<Model.ProjectEdmxItem> dataList)
         {
             InitializeComponent();
             ProjectEdmxList = dataList;
 
-            var edmxDatasource = ProjectEdmxList.SelectMany(a => a.EdmxPath).ToList();
+            edmxDatasource = ProjectEdmxList.SelectMany(a => a.EdmxPath).ToList();
             this.comboEdmxList.DataSource = edmxDatasource;
             this.comboEdmxList.DisplayMember = "ShortFileName";
-           // this.comboEdmxList.ValueMember = "ShortFileName";
+            this.comboEdmxList.ValueMember = "ShortFileName";
         }
-
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -80,6 +81,28 @@ namespace TopLevelMenu
             {
                 MessageBox.Show("异常：" + ex.Message);
             }
+        }
+
+        private void comboEdmxList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectItem = edmxDatasource[this.comboEdmxList.SelectedIndex];
+            this.txtEdmxSrc.Text = this.txtEdmxDes.Text = selectItem.FullFileName;
+
+            var matchItem = ProjectEdmxList.Where(a => a.EdmxPath.Where(b => b.FullFileName == selectItem.FullFileName).Count() > 0);
+
+            connectionStringList = matchItem.SelectMany(a=>a.ConnectionString).ToList();
+            connectionStringList.ForEach(a=> {
+                a.DisplayName = $"{a.DatabaseUserName.PadRight(20)}  {a.Name}";
+            });
+
+            this.comboBoxConnString.DataSource = connectionStringList;
+            this.comboBoxConnString.DisplayMember = "DisplayName";
+        }
+
+        private void comboBoxConnString_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectItem = connectionStringList [this.comboBoxConnString.SelectedIndex];
+            this.txtConnStr.Text = selectItem.ConnectionString;
         }
     }
 

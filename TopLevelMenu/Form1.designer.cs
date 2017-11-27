@@ -44,7 +44,7 @@
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(443, 557);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(100, 45);
             this.btnSave.TabIndex = 0;
@@ -65,7 +65,7 @@
             // txtConnStr
             // 
             this.txtConnStr.Location = new System.Drawing.Point(255, 383);
-            this.txtConnStr.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtConnStr.Margin = new System.Windows.Forms.Padding(4);
             this.txtConnStr.Multiline = true;
             this.txtConnStr.Name = "txtConnStr";
             this.txtConnStr.Size = new System.Drawing.Size(600, 90);
@@ -74,7 +74,7 @@
             // txtEdmxSrc
             // 
             this.txtEdmxSrc.Location = new System.Drawing.Point(255, 91);
-            this.txtEdmxSrc.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtEdmxSrc.Margin = new System.Windows.Forms.Padding(4);
             this.txtEdmxSrc.Multiline = true;
             this.txtEdmxSrc.Name = "txtEdmxSrc";
             this.txtEdmxSrc.Size = new System.Drawing.Size(600, 90);
@@ -93,7 +93,7 @@
             // txtEdmxDes
             // 
             this.txtEdmxDes.Location = new System.Drawing.Point(255, 189);
-            this.txtEdmxDes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtEdmxDes.Margin = new System.Windows.Forms.Padding(4);
             this.txtEdmxDes.Multiline = true;
             this.txtEdmxDes.Name = "txtEdmxDes";
             this.txtEdmxDes.Size = new System.Drawing.Size(600, 90);
@@ -134,6 +134,7 @@
             this.comboEdmxList.Name = "comboEdmxList";
             this.comboEdmxList.Size = new System.Drawing.Size(600, 23);
             this.comboEdmxList.TabIndex = 9;
+            this.comboEdmxList.SelectedIndexChanged += new System.EventHandler(this.comboEdmxList_SelectedIndexChanged);
             // 
             // comboBoxConnString
             // 
@@ -142,6 +143,7 @@
             this.comboBoxConnString.Name = "comboBoxConnString";
             this.comboBoxConnString.Size = new System.Drawing.Size(600, 23);
             this.comboBoxConnString.TabIndex = 10;
+            this.comboBoxConnString.SelectedIndexChanged += new System.EventHandler(this.comboBoxConnString_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -159,7 +161,7 @@
             this.Controls.Add(this.txtConnStr);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnSave);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "EF映射添加注释工具";
             this.ResumeLayout(false);
